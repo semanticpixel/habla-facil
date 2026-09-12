@@ -12,6 +12,7 @@ class MenuParser(HTMLParser):
         self.current = None
         self.in_h2 = False
         self.in_ingredients = False
+        self.in_num = False
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
@@ -25,6 +26,7 @@ class MenuParser(HTMLParser):
                 "ingredients": [],
                 "glass": None,
                 "dot": None,
+                "num": None,
             }
             return
 
@@ -33,6 +35,9 @@ class MenuParser(HTMLParser):
 
         if tag == "h2":
             self.in_h2 = True
+        elif tag == "span" and "num" in classes:
+            self.current["num"] = ""
+            self.in_num = True
         elif tag == "p" and "ing" in classes:
             self.in_ingredients = True
         elif tag == "use":
@@ -45,7 +50,9 @@ class MenuParser(HTMLParser):
             }
 
     def handle_endtag(self, tag):
-        if tag == "h2":
+        if tag == "span":
+            self.in_num = False
+        elif tag == "h2":
             self.in_h2 = False
         elif tag == "p":
             self.in_ingredients = False
@@ -57,7 +64,9 @@ class MenuParser(HTMLParser):
         if self.current is None:
             return
 
-        if self.in_h2:
+        if self.in_num:
+            self.current["num"] += data
+        elif self.in_h2:
             self.current["h2"].append(data)
         elif self.in_ingredients:
             self.current["ingredients"].append(data)
@@ -84,15 +93,20 @@ def main():
     errors = []
     names = set()
 
-    for index, entry in enumerate(parser.entries, start=1):
+    for entry in parser.entries:
         label = compact(entry["h2"]) or f"entry at line {entry['line']}"
         liquid = color_from_style(entry["style"])
         dot = entry["dot"]
 
-        if not re.match(r"^\d{2}\s+\S", label):
-            errors.append(f"Line {entry['line']}: drink heading should start with a two-digit number.")
+        if entry["num"] is None:
+            errors.append(f"Line {entry['line']}: {label} is missing its <span class=\"num\"> counter slot.")
+        elif entry["num"].strip():
+            errors.append(
+                f"Line {entry['line']}: {label} has a hardcoded drink number; "
+                "numbering comes from the CSS counter."
+            )
 
-        drink_name = re.sub(r"^\d{2}\s+", "", label)
+        drink_name = label
         if drink_name in names:
             errors.append(f"Line {entry['line']}: duplicate drink name: {drink_name}")
         names.add(drink_name)
@@ -122,10 +136,6 @@ def main():
 
             if not 10 <= value <= 86:
                 errors.append(f"Line {entry['line']}: {label} dot {axis} is outside the plot bounds.")
-
-        expected_number = f"{index:02d}"
-        if not label.startswith(expected_number):
-            errors.append(f"Line {entry['line']}: expected drink number {expected_number}.")
 
     if not parser.entries:
         errors.append("No menu entries found.")

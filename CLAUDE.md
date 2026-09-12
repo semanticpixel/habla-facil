@@ -8,35 +8,55 @@ The site is two pages. `index.html` is the front door — logo and tagline, noth
 else. The menu lives at a random filename and **nothing links to it**: the only way
 in is the QR code at the bar. The plan is a different menu file per occasion.
 
-The menu is a finished layout, and the drink list can be revised for each service.
+The menu page is **generated**, not hand-written. `menu.json` is the source of truth
+for the drink list; `tools/build-menu.py` renders it through `templates/menu.html`
+and a GitHub Actions workflow publishes the result. To change the drinks, edit
+`menu.json` — never the generated HTML, which is not in the repository.
 
 ### About the unguessable URL
 
 This is obscurity, not access control, and it is the right amount of effort for this
 QR menu — but know what it does and doesn't do. Nobody will guess
-`ukln1jc9h9.html`, `robots.txt` and a `noindex` tag keep it out of search results,
-and no page links to it. What it does not do: GitHub Pages on a free account requires
-a **public repo**, so the filename is visible to anyone who opens the repo's file
-list or its commit history. Renaming the file later does not erase it from history.
+the filename, `robots.txt` and a `noindex` tag keep it out of search results, and no
+page links to it. What it does not do: GitHub Pages on a free account requires a
+**public repo**, so the filename is visible to anyone who reads `menu.json` or its
+commit history. Rotating it later does not erase the old one from history.
 If that matters, Pages from a private repo is a paid feature; otherwise treat the
 URL as semi-public and don't put anything in the menu you'd mind a stranger reading.
 
-To publish a new menu: copy the menu file to a fresh random name, edit the drinks,
-delete the old file, regenerate the QR. Keep `noindex` on every one.
+To publish a new menu: run `tools/new-menu` to rotate the filename in `menu.json`,
+edit the drinks, push, regenerate the QR. There is no old file to delete — the page
+is generated, so the previous URL simply stops existing. `noindex` lives in the
+template, so every menu inherits it.
+
+Note that `menu.json` is in the public repository, so the current filename is
+visible there just as the HTML file used to be. Same exposure as before, no better
+and no worse.
 
 ## Files
 
 ```
+menu.json                      THE DRINK LIST — source of truth, edit this
+templates/menu.html            the menu shell: CSS, glass sprite, {{placeholders}}
+tools/build-menu.py            menu.json + template -> _site/
 index.html                     front door: logo and tagline only, nothing else
-ukln1jc9h9.html                the menu, at an unguessable filename
+404.html                       branded not-found page
 CNAME                          custom domain for GitHub Pages
 robots.txt                     disallow all — keeps the menu out of search results
 assets/logo.svg                hand-lettered "habla fácil" mark, traced from a PNG
 assets/glasses/coupe.svg       coupe, two layers
 assets/glasses/short.svg       rocks glass, two layers  ← in use
 assets/glasses/short-smoothed.svg   alternate rocks glass, drop-in swap
-tools/new-menu                 copies the current menu to a fresh random filename
+tools/new-menu                 rotates menu.json to a fresh random filename
+tools/check-menu.py            validates a generated menu page
 tools/trace-glass.py           turns a new glass PNG into a matching SVG
+.github/workflows/pages.yml    builds and deploys to GitHub Pages
+```
+
+The generated menu page lands in `_site/`, which is gitignored. Build it with:
+
+```bash
+python3 tools/build-menu.py      # then open the path it prints
 ```
 
 Neither page makes external requests — no fonts, no scripts, no image files. The
@@ -73,7 +93,23 @@ geometry, not applied in CSS, so the baselines still agree.
 
 ## How the menu is built
 
-Each drink is one `<article class="entry">` holding three named grid areas:
+Each drink is one entry in the `drinks` array of `menu.json`:
+
+```json
+{
+  "name": "Yellow",
+  "ingredients": "gin, yellow Chartreuse, Suze, lemon",
+  "tags": ["floral", "bitter", "sweet"],
+  "glass": "coupe",
+  "liquid": "#DBB319",
+  "flavour": { "x": -0.40, "y": -0.50 },
+  "instructions": "Equal parts, shaken."
+}
+```
+
+`instructions` is not rendered yet. It is there for the tap-the-logo recipe reveal.
+
+Each drink renders as one `<article class="entry">` holding three named grid areas:
 
 ```
 grid-template-areas:
@@ -94,8 +130,15 @@ cy = 48 - y * 33     y: -1 bitter      → +1 sweet
 ```
 
 The dot is filled with the same colour as that drink's liquid, so the glass and the
-plot always agree. **If you add a drink, compute `cx`/`cy` with that formula** rather
-than eyeballing coordinates.
+plot always agree. **You do not compute `cx`/`cy` by hand** — put the `x`/`y` pair in
+`menu.json` and the generator applies the formula. `tools/build-menu.py` rejects any
+value outside -1..1, and `tools/check-menu.py` rejects a rendered dot outside the
+plot bounds.
+
+Drink numbers come from a CSS counter (`counter-reset` on `.menu`,
+`counter-increment` on `.entry`, `decimal-leading-zero` in `.num::before`), so the
+markup carries no index and reordering drinks in `menu.json` renumbers them
+automatically. A hardcoded number in the HTML is a validation error.
 
 Key CSS variables in `:root`: `--paper`, `--ink`, `--muted`, `--pen` (frame around an
 entry), `--seam` (dividers inside one, deliberately about a third of `--pen`),
@@ -114,23 +157,27 @@ so the writing sits on the lines, don't change one without the other), `--plot`
 - **The glass is 9.5rem against a 10.5rem plot.** Not a mistake — the glass viewBox
   has empty margin baked in, so the two drawings come out the same actual height.
 - Lowercase tagline under the logo: the mark already says the name.
+- **Two drinks sit below a 3.0 contrast ratio** against the paper on purpose: Yellow
+  (1.92) and White-Collar Mexican (2.51). Both are pale drinks where the colour was
+  chosen over dot legibility. Yellow has nowhere to go — saturation and darkness
+  trade against each other directly at that hue.
+- **Drink numbers come from a CSS counter, never the markup.** Reordering drinks in
+  `menu.json` renumbers them for free.
 
 ## Still open
 
-- **Drink list updates.** Current entries can be revised by changing each drink's
-  name, ingredients, glass, liquid colour, and flavour position.
-- **Liquid colours as a set.** Chosen one at a time they will drift. Six unrelated
-  colours down a cream page get noisy — pick them together.
+- **Liquid colours as a set.** Chosen one at a time they drift. The current seven
+  were picked together: hue separates the three non-red drinks, and the four red
+  ones — which cannot separate by hue — are laddered by lightness and chroma, from
+  pale strawberry aperitif to deep rye brick. Every pair clears an OKLab distance of
+  0.08. Adding a drink means re-checking the set, not picking one more colour.
 - **Printing.** Browsers drop background graphics by default, which would take the
   graph paper and the rules with them. Needs a print stylesheet or real borders if
   anyone prints this.
-- **Drinks are hardcoded in the HTML.** If the list churns a lot, lifting them into a
-  JSON array with a small render function would make edits safer — the plot maths is
-  the part that is easy to get wrong by hand.
 - **Only two glass types exist.** For a highball or a flute, see below.
 - **One serif does every job.** A display face for the drink names only is the
   cheapest way to make the page feel as specific as the logo.
-- Whether six repeated plots earn their place, or whether one shared map at the end —
+- Whether seven repeated plots earn their place, or whether one shared map at the end —
   the way the TasteAtlas reference does it — would say more about how the drinks
   relate. A middle option: keep the small plots, strip their labels, label the axes
   once in a legend.
@@ -150,14 +197,24 @@ python3 tools/trace-glass.py highball.png assets/glasses/highball.svg \
 104, the rocks glass is 52.8. The script fails loudly if the drawing overflows the
 box rather than letting it clip silently. `--smooth N` rounds wobble out of the liquid
 edge; `--thin N` erodes the ink to match pen weight across drawings, at some cost to
-character. Add the result to the sprite in `index.html` as another `<symbol>`.
+character.
+
+Add the result to the sprite in `templates/menu.html` as another `<symbol>`, then add
+its name to `GLASSES` in `tools/build-menu.py` so `menu.json` can reference it.
 
 ## Deploying
 
-Static site, no build step. Push, enable Pages on the default branch at root. The
-custom domain is `elhablafacil.com`, stored in the root `CNAME` file. The front door
-is `https://elhablafacil.com/` and the current menu is
-`https://elhablafacil.com/ukln1jc9h9.html`.
+Push to `main`. `.github/workflows/pages.yml` builds the site and deploys it to
+GitHub Pages. Pages must be set to **"GitHub Actions"** as its source, not
+"Deploy from a branch" — the workflow requests this itself via `configure-pages`,
+but the setting is worth checking if a deploy goes missing.
+
+Pull requests build and validate but never publish.
+
+The custom domain is `elhablafacil.com`, stored in the root `CNAME` file, which the
+build copies into the published output. The front door is
+`https://elhablafacil.com/` and the current menu is whatever `file` says in
+`menu.json`.
 
 **Point the QR code at the menu URL, not the front door.** Test it on a phone at the
 brightness and distance people will actually scan it, and check the menu URL in a

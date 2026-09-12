@@ -1,17 +1,24 @@
 #!/bin/sh
+# Rotate the menu to a fresh unguessable filename.
+#
+# Updates the "file" field in menu.json and prints the new name. The page
+# itself is generated, so there is nothing to copy and no old file to delete;
+# the next build publishes at the new URL and the old one 404s.
+#
+# Regenerate the QR code afterwards, and test it before service.
 set -eu
 
-source="${1:-ukln1jc9h9.html}"
+root="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
 
-if [ ! -f "$source" ]; then
-  printf 'Source menu not found: %s\n' "$source" >&2
-  exit 1
-fi
+name="$(LC_ALL=C od -An -N8 -tx1 /dev/urandom | tr -d ' \n' | cut -c1-10).html"
 
-while :; do
-  name="$(LC_ALL=C od -An -N8 -tx1 /dev/urandom | tr -d ' \n' | cut -c1-10).html"
-  [ ! -e "$name" ] && break
-done
+MENU_NAME="$name" python3 - "$root/menu.json" <<'PY'
+import json, os, pathlib, sys
 
-cp "$source" "$name"
+path = pathlib.Path(sys.argv[1])
+menu = json.loads(path.read_text(encoding="utf-8"))
+menu["file"] = os.environ["MENU_NAME"]
+path.write_text(json.dumps(menu, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+PY
+
 printf '%s\n' "$name"
