@@ -30,6 +30,7 @@ delete the old file, regenerate the QR. Keep `noindex` on every one.
 ```
 index.html                     front door: logo and tagline only, nothing else
 ukln1jc9h9.html                the menu, at an unguessable filename
+CNAME                          custom domain for GitHub Pages
 robots.txt                     disallow all — keeps the menu out of search results
 assets/logo.svg                hand-lettered "habla fácil" mark, traced from a PNG
 assets/glasses/coupe.svg       coupe, two layers
@@ -154,8 +155,9 @@ character. Add the result to the sprite in `index.html` as another `<symbol>`.
 ## Deploying
 
 Static site, no build step. Push, enable Pages on the default branch at root. The
-front door is `https://<user>.github.io/<repo>/` and the menu is
-`https://<user>.github.io/<repo>/ukln1jc9h9.html`.
+custom domain is `elhablafacil.com`, stored in the root `CNAME` file. The front door
+is `https://elhablafacil.com/` and the current menu is
+`https://elhablafacil.com/ukln1jc9h9.html`.
 
 **Point the QR code at the menu URL, not the front door.** Test it on a phone at the
 brightness and distance people will actually scan it, and check the menu URL in a
