@@ -1,0 +1,17 @@
+#!/bin/sh
+set -eu
+
+source="${1:-ukln1jc9h9.html}"
+
+if [ ! -f "$source" ]; then
+  printf 'Source menu not found: %s\n' "$source" >&2
+  exit 1
+fi
+
+while :; do
+  name="$(LC_ALL=C od -An -N8 -tx1 /dev/urandom | tr -d ' \n' | cut -c1-10).html"
+  [ ! -e "$name" ] && break
+done
+
+cp "$source" "$name"
+printf '%s\n' "$name"
