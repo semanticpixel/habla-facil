@@ -44,7 +44,15 @@
     text-align: center;
     background-color: var(--paper);
   }
-  .masthead svg { width: clamp(9rem, 26vw, 13rem); height: auto; color: var(--ink); }
+  .masthead svg {
+    width: clamp(9rem, 26vw, 13rem); height: auto; color: var(--ink);
+    /* the reveal is a secret: no pointer cursor, no tap highlight, and no
+       double-tap zoom swallowing the second and third taps on a phone */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+  }
   .masthead p { margin: 1.35rem 0 0; font-style: italic; color: var(--muted); font-size: .95rem; }
 
   /* ---- one drink: three named cells ---- */
@@ -98,6 +106,13 @@
   .tags { display: none; margin: 0; line-height: var(--pitch); font-size: .78rem; color: var(--muted); }
   .ing  { margin: 0; line-height: var(--pitch); font-style: italic; }
 
+  /* Method, revealed by tapping the logo three times. Rendered into the page
+     and hidden in CSS -- never fetched or built at runtime. Roman against the
+     italic ingredients, and on the same rules as everything else in the leaf. */
+  .recipe { display: none; margin: 0; line-height: var(--pitch); font-size: .82rem; color: var(--muted); }
+  .recipe::before { content: "method \2014\a0"; letter-spacing: .04em; }
+  :root.recipes .recipe { display: block; }
+
   .colophon {
     margin: 1.75rem 0 0; text-align: center;
     font-size: .8rem; font-style: italic; color: var(--muted);
@@ -111,6 +126,32 @@
     .glass { width: min(7.5rem, 100%); }
   }
 </style>
+<script>
+/* Tap the logo three times to show or hide the methods. The state is applied to
+   <html> here, before first paint, so a reload does not flash the menu without
+   them. Storage can throw in a private window, so every access is guarded. */
+(function () {
+  var KEY = "hf-methods", root = document.documentElement, store = null;
+  try { store = window.localStorage; } catch (e) {}
+  try { if (store && store.getItem(KEY) === "1") root.classList.add("recipes"); } catch (e) {}
+
+  document.addEventListener("DOMContentLoaded", function () {
+    var logo = document.querySelector(".masthead svg");
+    if (!logo) return;
+    var taps = 0, timer;
+    logo.addEventListener("click", function () {
+      clearTimeout(timer);
+      if (++taps < 3) {
+        timer = setTimeout(function () { taps = 0; }, 900);
+        return;
+      }
+      taps = 0;
+      var on = root.classList.toggle("recipes");
+      try { if (store) { on ? store.setItem(KEY, "1") : store.removeItem(KEY); } } catch (e) {}
+    });
+  });
+})();
+</script>
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">

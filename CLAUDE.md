@@ -55,6 +55,7 @@ assets/glasses/short-smoothed.svg   alternate rocks glass, drop-in swap
 tools/new-menu                 archives menu.json, then rotates to a fresh filename
 _archive/                      retired menu.json snapshots, never published
 tools/check-menu.py            validates a generated menu page
+tools/test-reveal.js           tests the tap-to-reveal script from the built page
 tools/trace-glass.py           turns a new glass PNG into a matching SVG
 .github/workflows/pages.yml    builds and deploys to GitHub Pages
 ```
@@ -65,8 +66,10 @@ The generated menu page lands in `_site/`, which is gitignored. Build it with:
 python3 tools/build-menu.py      # then open the path it prints
 ```
 
-Neither page makes external requests — no fonts, no scripts, no image files. The
-glass SVGs are inlined as `<symbol>`s and referenced with `<use>`. The copies in
+Neither page makes an external request — no fonts, no script files, no image files.
+The menu carries one small inline script, for the tap-to-reveal methods; that is the
+only JavaScript in the project. The glass SVGs are inlined as `<symbol>`s and
+referenced with `<use>`. The copies in
 `assets/` are the same artwork for reuse elsewhere (Instagram, coasters, print).
 
 ## How the artwork works
@@ -113,7 +116,9 @@ Each drink is one entry in the `drinks` array of `menu.json`:
 }
 ```
 
-`instructions` is not rendered yet. It is there for the tap-the-logo recipe reveal.
+`instructions` is the method, rendered into every entry and hidden in CSS. Tapping
+the logo three times shows all of them at once and stores that in `localStorage`, so
+whoever is pouring taps once and it sticks. Three more taps hide them again.
 
 Each drink renders as one `<article class="entry">` holding three named grid areas:
 
@@ -163,6 +168,13 @@ so the writing sits on the lines, don't change one without the other), `--plot`
 - **The glass is 9.5rem against a 10.5rem plot.** Not a mistake — the glass viewBox
   has empty margin baked in, so the two drawings come out the same actual height.
 - Lowercase tagline under the logo: the mark already says the name.
+- **The methods are rendered, not fetched.** They ship in the HTML and CSS hides
+  them, so the page needs no JavaScript to be complete — the script only toggles a
+  class on `<html>`. It reads storage before first paint so a reload does not flash
+  the menu without them.
+- **The reveal has no visible affordance** on purpose: no pointer cursor, no tap
+  highlight, no focus ring. It is a secret for whoever is behind the bar, which also
+  means it is pointer-only and not reachable by keyboard.
 - **Two drinks sit below a 3.0 contrast ratio** against the paper on purpose: Yellow
   (1.92) and White-Collar Mexican (2.51). Both are pale drinks where the colour was
   chosen over dot legibility. Yellow has nowhere to go — saturation and darkness

@@ -32,6 +32,10 @@ jobs:
       - name: Build the site
         run: python3 tools/build-menu.py --out _site
 
+      # Node ships on the runner; no setup step needed.
+      - name: Test the tap-to-reveal script
+        run: node tools/test-reveal.js
+
       - uses: actions/configure-pages@v5
         if: github.event_name != 'pull_request'
         with:
