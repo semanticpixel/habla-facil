@@ -30,5 +30,12 @@ its snapshot over `menu.json` and building. Nothing in `_archive/` is published.
 The live site uses `elhablafacil.com`; the QR code should point directly to the
 current menu file, not the front door.
 
-To start a fresh menu URL, run `tools/new-menu`. It rotates the filename in
-`menu.json` and prints the name to use for the next QR code.
+To start a fresh menu URL, run `tools/new-menu`. It archives the outgoing
+`menu.json` and rotates to a new filename. Then regenerate the QR:
+
+```bash
+pip install segno
+python3 tools/make-qr.py      # writes _local/menu-qr.{svg,png}
+```
+
+`_local/` is gitignored — QR codes are regenerable, and this repository is public.

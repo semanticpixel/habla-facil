@@ -18,4 +18,5 @@ Quick orientation:
 - Drink numbers come from a CSS counter — never hardcode an index in the markup.
 - Drink methods are rendered into the page and hidden in CSS; the inline script only
   toggles a class. Run `node tools/test-reveal.js` after a build if you touch it.
+- `_local/` is gitignored scratch for generated artifacts; never commit its contents.
 - Keep changes small and consistent with the existing static HTML/CSS approach.
