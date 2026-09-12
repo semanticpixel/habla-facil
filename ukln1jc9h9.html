@@ -51,12 +51,12 @@
   .entry {
     display: grid;
     border: 1px solid var(--pen);
-    margin-bottom: 1.15rem;
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
       "leaf  leaf"
       "plate chart";
   }
+  .entry + .entry { margin-top: 1.15rem; }
 
   /* both graph-paper cells share one background recipe */
   .plate, .chart {
