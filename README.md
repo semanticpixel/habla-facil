@@ -18,8 +18,10 @@ To change the drinks, edit `menu.json` — the generated HTML is not in the repo
 See `CLAUDE.md` for how the layout, the glass artwork, and the flavour plot fit
 together, and for what's still open.
 
-Retired menus live in git history rather than on disk, since the page is generated.
-`_archive/` still holds any menu HTML kept from before the generator.
+When you rotate to a new menu URL, `tools/new-menu` snapshots the outgoing
+`menu.json` into `_archive/` as `<date>-<old-filename>.json`. The drink list is what
+is worth keeping — the page is generated, so any archived menu rebuilds by copying
+its snapshot over `menu.json` and building. Nothing in `_archive/` is published.
 
 The live site uses `elhablafacil.com`; the QR code should point directly to the
 current menu file, not the front door.

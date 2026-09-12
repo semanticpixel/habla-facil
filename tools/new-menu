@@ -1,9 +1,10 @@
 #!/bin/sh
 # Rotate the menu to a fresh unguessable filename.
 #
-# Updates the "file" field in menu.json and prints the new name. The page
-# itself is generated, so there is nothing to copy and no old file to delete;
-# the next build publishes at the new URL and the old one 404s.
+# Archives the outgoing menu.json into _archive/ first, then points menu.json at
+# a new random filename and prints it. The page itself is generated, so there is
+# nothing to copy and no old file to delete -- the next build publishes at the
+# new URL and the old one 404s.
 #
 # Regenerate the QR code afterwards, and test it before service.
 set -eu
@@ -12,13 +13,29 @@ root="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
 
 name="$(LC_ALL=C od -An -N8 -tx1 /dev/urandom | tr -d ' \n' | cut -c1-10).html"
 
-MENU_NAME="$name" python3 - "$root/menu.json" <<'PY'
-import json, os, pathlib, sys
+MENU_NAME="$name" python3 - "$root" <<'PY'
+import datetime, json, os, pathlib, sys
 
-path = pathlib.Path(sys.argv[1])
+root = pathlib.Path(sys.argv[1])
+path = root / "menu.json"
 menu = json.loads(path.read_text(encoding="utf-8"))
+
+def write(target, data):
+    target.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+# Snapshot the menu being retired: the drink list should outlive its URL.
+archive = root / "_archive"
+archive.mkdir(exist_ok=True)
+stem = pathlib.Path(menu["file"]).stem
+snapshot = archive / f"{datetime.date.today():%Y-%m-%d}-{stem}.json"
+if snapshot.exists():
+    raise SystemExit(f"refusing to overwrite {snapshot.relative_to(root)}")
+write(snapshot, menu)
+
 menu["file"] = os.environ["MENU_NAME"]
-path.write_text(json.dumps(menu, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+write(path, menu)
+
+print(f"archived {snapshot.relative_to(root)}", file=sys.stderr)
 PY
 
 printf '%s\n' "$name"

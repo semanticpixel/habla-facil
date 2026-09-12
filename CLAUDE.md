@@ -29,6 +29,11 @@ edit the drinks, push, regenerate the QR. There is no old file to delete — the
 is generated, so the previous URL simply stops existing. `noindex` lives in the
 template, so every menu inherits it.
 
+`new-menu` snapshots the outgoing `menu.json` into `_archive/` before rotating, so
+each menu's drink list outlives its URL and can be rebuilt later. That happens on
+rotation only: revising drinks without rotating leaves the previous list in git
+history alone. See `_archive/README.md`.
+
 Note that `menu.json` is in the public repository, so the current filename is
 visible there just as the HTML file used to be. Same exposure as before, no better
 and no worse.
@@ -47,7 +52,8 @@ assets/logo.svg                hand-lettered "habla fácil" mark, traced from a 
 assets/glasses/coupe.svg       coupe, two layers
 assets/glasses/short.svg       rocks glass, two layers  ← in use
 assets/glasses/short-smoothed.svg   alternate rocks glass, drop-in swap
-tools/new-menu                 rotates menu.json to a fresh random filename
+tools/new-menu                 archives menu.json, then rotates to a fresh filename
+_archive/                      retired menu.json snapshots, never published
 tools/check-menu.py            validates a generated menu page
 tools/trace-glass.py           turns a new glass PNG into a matching SVG
 .github/workflows/pages.yml    builds and deploys to GitHub Pages
