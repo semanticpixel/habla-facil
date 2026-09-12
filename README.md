@@ -1,6 +1,6 @@
 # habla fácil
 
-Cocktail menu for a home bar, served as a static page and reached by a QR code.
+Cocktail menu for El Habla Fácil, served as a static page and reached by a QR code.
 
 Two pages: `index.html` is the front door, and the menu sits at a random filename
 that nothing links to, reachable only by the QR code at the bar. No build step, no

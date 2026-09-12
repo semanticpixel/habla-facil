@@ -1,9 +1,8 @@
 # habla fácil — cocktail menu
 
-A single-page cocktail menu for a home bar called **habla fácil** ("El Habla Fácil —
-the most exclusive cocktail bar in San Francisco"), built for a birthday. It will be
-served from GitHub Pages and reached by a QR code on the bar, so it is read on phones,
-standing up, in low light.
+A single-page cocktail menu for **El Habla Fácil** — the most exclusive cocktail bar
+in San Francisco. It is served from GitHub Pages and reached by a QR code on the bar,
+so it is read on phones, standing up, in low light.
 
 The site is two pages. `index.html` is the front door — logo and tagline, nothing
 else. The menu lives at a random filename and **nothing links to it**: the only way
@@ -14,8 +13,8 @@ still to come — replacing it is the next job.
 
 ### About the unguessable URL
 
-This is obscurity, not access control, and it is the right amount of effort for a
-party menu — but know what it does and doesn't do. Nobody will guess
+This is obscurity, not access control, and it is the right amount of effort for this
+QR menu — but know what it does and doesn't do. Nobody will guess
 `ukln1jc9h9.html`, `robots.txt` and a `noindex` tag keep it out of search results,
 and no page links to it. What it does not do: GitHub Pages on a free account requires
 a **public repo**, so the filename is visible to anyone who opens the repo's file
@@ -23,8 +22,8 @@ list or its commit history. Renaming the file later does not erase it from histo
 If that matters, Pages from a private repo is a paid feature; otherwise treat the
 URL as semi-public and don't put anything in the menu you'd mind a stranger reading.
 
-To publish a new menu for a new occasion: copy the menu file to a fresh random name,
-edit the drinks, delete the old file, regenerate the QR. Keep `noindex` on every one.
+To publish a new menu: copy the menu file to a fresh random name, edit the drinks,
+delete the old file, regenerate the QR. Keep `noindex` on every one.
 
 ## Files
 
@@ -160,4 +159,4 @@ front door is `https://<user>.github.io/<repo>/` and the menu is
 
 **Point the QR code at the menu URL, not the front door.** Test it on a phone at the
 brightness and distance people will actually scan it, and check the menu URL in a
-private window before the party — a typo in the filename is a 404 in front of guests.
+private window before service — a typo in the filename is a 404 at the bar.
