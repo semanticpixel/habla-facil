@@ -15,3 +15,6 @@ being served on the live site.
 
 The live site uses `elhablafacil.com`; the QR code should point directly to the
 current menu file, not the front door.
+
+To start a fresh menu URL, run `tools/new-menu`. It copies the current menu to a new
+random filename and prints the filename to use for the next QR code.

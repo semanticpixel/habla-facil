@@ -35,6 +35,7 @@ assets/logo.svg                hand-lettered "habla fácil" mark, traced from a 
 assets/glasses/coupe.svg       coupe, two layers
 assets/glasses/short.svg       rocks glass, two layers  ← in use
 assets/glasses/short-smoothed.svg   alternate rocks glass, drop-in swap
+tools/new-menu                 copies the current menu to a fresh random filename
 tools/trace-glass.py           turns a new glass PNG into a matching SVG
 ```
 
