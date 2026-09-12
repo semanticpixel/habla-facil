@@ -168,6 +168,13 @@ so the writing sits on the lines, don't change one without the other), `--plot`
 - **The glass is 9.5rem against a 10.5rem plot.** Not a mistake — the glass viewBox
   has empty margin baked in, so the two drawings come out the same actual height.
 - Lowercase tagline under the logo: the mark already says the name.
+- **Padding, margin and borders are logical properties** (`padding-block`,
+  `margin-inline`, `border-block-start`, `border-inline-end`). Keep new rules in the
+  same idiom. Sizes stay physical (`width`, `max-width`) deliberately, as does the
+  `inset` on `.leaf::before` and the `max-width` media query — logical equivalents
+  there buy nothing for a page that is only ever laid out left-to-right.
+- **The body's block padding is symmetric.** Top and bottom both come from the one
+  `clamp()`, so the page is inset by the same amount at each end.
 - **The methods are rendered, not fetched.** They ship in the HTML and CSS hides
   them, so the page needs no JavaScript to be complete — the script only toggles a
   class on `<html>`. It reads storage before first paint so a reload does not flash

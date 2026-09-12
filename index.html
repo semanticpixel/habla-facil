@@ -21,7 +21,8 @@
   html, body { height: 100%; }
   body {
     margin: 0;
-    padding: 2rem 1.5rem;
+    padding-block: 2rem;
+    padding-inline: 1.5rem;
     display: grid;
     place-items: center;
     background: var(--paper);
@@ -31,7 +32,8 @@
   main { text-align: center; max-width: 28rem; }
   main svg { width: clamp(11rem, 45vw, 16rem); height: auto; color: var(--ink); }
   p {
-    margin: 2.25rem 0 0;
+    margin-block: 2.25rem 0;
+    margin-inline: 0;
     font-style: italic;
     color: var(--muted);
     font-size: clamp(.95rem, 3.4vw, 1.05rem);
