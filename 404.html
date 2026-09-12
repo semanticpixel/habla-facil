@@ -8,8 +8,10 @@
 <style>
   :root { --paper: #FCFAF3; --ink: #060405; --muted: #6E6658; }
   * { box-sizing: border-box; }
-  html, body { min-height: 100%; }
   body {
+    /* vh first as the fallback; dvh accounts for mobile browser chrome */
+    min-block-size: 100vh;
+    min-block-size: 100dvh;
     margin: 0;
     padding-block: 2rem;
     padding-inline: 1.5rem;
