@@ -29,6 +29,10 @@ edit the drinks, push, regenerate the QR. There is no old file to delete — the
 is generated, so the previous URL simply stops existing. `noindex` lives in the
 template, so every menu inherits it.
 
+Regenerate the QR with `tools/make-qr.py` after every rotation. It reads the domain
+from `CNAME` and the filename from `menu.json`, so it cannot point at a stale URL --
+which is the failure that ends with guests scanning into a 404 at the bar.
+
 `new-menu` snapshots the outgoing `menu.json` into `_archive/` before rotating, so
 each menu's drink list outlives its URL and can be rebuilt later. That happens on
 rotation only: revising drinks without rotating leaves the previous list in git
@@ -53,7 +57,9 @@ assets/glasses/coupe.svg       coupe, two layers
 assets/glasses/short.svg       rocks glass, two layers  ← in use
 assets/glasses/short-smoothed.svg   alternate rocks glass, drop-in swap
 tools/new-menu                 archives menu.json, then rotates to a fresh filename
+tools/make-qr.py               QR code for the current menu URL, into _local/
 _archive/                      retired menu.json snapshots, never published
+_local/                        gitignored scratch for QR codes and other artifacts
 tools/check-menu.py            validates a generated menu page
 tools/test-reveal.js           tests the tap-to-reveal script from the built page
 tools/trace-glass.py           turns a new glass PNG into a matching SVG
@@ -241,6 +247,19 @@ build copies into the published output. The front door is
 `https://elhablafacil.com/` and the current menu is whatever `file` says in
 `menu.json`.
 
-**Point the QR code at the menu URL, not the front door.** Test it on a phone at the
-brightness and distance people will actually scan it, and check the menu URL in a
-private window before service — a typo in the filename is a 404 at the bar.
+**Point the QR code at the menu URL, not the front door.** `tools/make-qr.py` does
+that for you:
+
+```bash
+pip install segno
+python3 tools/make-qr.py          # writes _local/menu-qr.{svg,png}
+```
+
+It defaults to error-correction level H, which tolerates 30% damage — worth the
+denser code for something that gets splashed and handled. Print it 4–5cm square,
+keep the four-module quiet zone, and never invert it: some scanners refuse
+light-on-dark. Test it on a phone at the brightness and distance people will
+actually scan from, and check the menu URL in a private window before service.
+
+`segno` is needed only to make a QR, the same way `tools/trace-glass.py` needs
+Pillow. Neither the build nor CI touches them.
