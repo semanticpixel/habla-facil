@@ -16,4 +16,6 @@ Quick orientation:
 - `tools/build-menu.py` validates `menu.json` and runs `tools/check-menu.py` on the
   rendered page; both must pass.
 - Drink numbers come from a CSS counter — never hardcode an index in the markup.
+- Drink methods are rendered into the page and hidden in CSS; the inline script only
+  toggles a class. Run `node tools/test-reveal.js` after a build if you touch it.
 - Keep changes small and consistent with the existing static HTML/CSS approach.

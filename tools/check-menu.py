@@ -13,6 +13,7 @@ class MenuParser(HTMLParser):
         self.in_h2 = False
         self.in_ingredients = False
         self.in_num = False
+        self.in_recipe = False
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
@@ -27,6 +28,7 @@ class MenuParser(HTMLParser):
                 "glass": None,
                 "dot": None,
                 "num": None,
+                "recipe": [],
             }
             return
 
@@ -40,6 +42,8 @@ class MenuParser(HTMLParser):
             self.in_num = True
         elif tag == "p" and "ing" in classes:
             self.in_ingredients = True
+        elif tag == "p" and "recipe" in classes:
+            self.in_recipe = True
         elif tag == "use":
             self.current["glass"] = attrs.get("href") or attrs.get("xlink:href")
         elif tag == "circle" and "dot" in classes:
@@ -56,6 +60,7 @@ class MenuParser(HTMLParser):
             self.in_h2 = False
         elif tag == "p":
             self.in_ingredients = False
+            self.in_recipe = False
         elif tag == "article" and self.current is not None:
             self.entries.append(self.current)
             self.current = None
@@ -68,6 +73,8 @@ class MenuParser(HTMLParser):
             self.current["num"] += data
         elif self.in_h2:
             self.current["h2"].append(data)
+        elif self.in_recipe:
+            self.current["recipe"].append(data)
         elif self.in_ingredients:
             self.current["ingredients"].append(data)
 
@@ -113,6 +120,9 @@ def main():
 
         if not compact(entry["ingredients"]):
             errors.append(f"Line {entry['line']}: {label} is missing ingredients.")
+
+        if not compact(entry["recipe"]):
+            errors.append(f"Line {entry['line']}: {label} is missing its method.")
 
         if not liquid:
             errors.append(f"Line {entry['line']}: {label} is missing --glass-liquid.")

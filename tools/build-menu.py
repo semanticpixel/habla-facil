@@ -34,10 +34,15 @@ STATIC_DIRS = ("assets",)
 
 # The drink number comes from a CSS counter, so the markup carries no index and
 # reordering drinks in menu.json cannot desynchronise the numbering.
+#
+# The method is rendered into every entry and hidden in CSS. Tapping the logo three
+# times reveals it -- nothing is fetched or assembled at runtime, so the page works
+# the same with scripting off, minus the secret.
 ENTRY = """      <article class="entry" style="--glass-liquid: {liquid}">
         <div class="leaf">
           <h2><span class="num"></span> {name}</h2>
           <p class="ing">{ingredients}</p>
+          <p class="recipe">{instructions}</p>
           <p class="tags">{tags}</p>
         </div>
         <div class="plate">
@@ -131,6 +136,7 @@ def render(menu):
             liquid=drink["liquid"],
             name=html.escape(drink["name"]),
             ingredients=html.escape(drink["ingredients"]),
+            instructions=html.escape(drink["instructions"]),
             tags=html.escape(" · ".join(drink["tags"])),
             glass=drink["glass"],
             cx=cx,
