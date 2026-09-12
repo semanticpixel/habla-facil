@@ -10,4 +10,5 @@ Quick orientation:
 - The live menu is an unlinked random-filename HTML page reached by QR code.
 - Keep `robots.txt` and each menu page's `noindex, nofollow` metadata intact.
 - Preserve the El Habla Fácil brand illusion in public-facing docs and copy.
+- Run `tools/check-menu.py` after changing drink entries or flavour plots.
 - Keep changes small and consistent with the existing static HTML/CSS approach.
