@@ -1,0 +1,114 @@
+{
+  "file": "ukln1jc9h9.html",
+  "note": "Remember to drink water. We warned you.",
+  "drinks": [
+    {
+      "name": "Yellow",
+      "ingredients": "gin, yellow Chartreuse, Suze, lemon",
+      "tags": [
+        "floral",
+        "bitter",
+        "sweet"
+      ],
+      "glass": "coupe",
+      "liquid": "#DBB319",
+      "flavour": {
+        "x": -0.4,
+        "y": -0.5
+      },
+      "instructions": "Equal parts, shaken."
+    },
+    {
+      "name": "Aviation My Way",
+      "ingredients": "mezcal, maraschino, lime, crème de violette",
+      "tags": [
+        "floral",
+        "sour",
+        "sweet"
+      ],
+      "glass": "coupe",
+      "liquid": "#9963B1",
+      "flavour": {
+        "x": -0.52,
+        "y": 0.45
+      },
+      "instructions": "1.5 oz mezcal, 0.5 oz maraschino, 0.75 oz lime, bar spoon syrup. Shaken. Float 0.25 oz crème de violette on top."
+    },
+    {
+      "name": "Coconut Daiquiri",
+      "ingredients": "coconut rum, lime, gum syrup",
+      "tags": [
+        "sour",
+        "sweet",
+        "creamy"
+      ],
+      "glass": "coupe",
+      "liquid": "#A08849",
+      "flavour": {
+        "x": -0.08,
+        "y": 0.32
+      },
+      "instructions": "2 oz coconut rum, 0.75 oz lime, 0.5 oz gum syrup. Shaken."
+    },
+    {
+      "name": "Devin’s Day Dream",
+      "ingredients": "mezcal or gin, strawberry Campari, sweet vermouth",
+      "tags": [
+        "bitter",
+        "botanical"
+      ],
+      "glass": "short",
+      "liquid": "#D53D38",
+      "flavour": {
+        "x": 0.55,
+        "y": -0.48
+      },
+      "instructions": "Equal parts, stirred."
+    },
+    {
+      "name": "Devin’s Night Dream",
+      "ingredients": "rye, strawberry Campari, sweet vermouth",
+      "tags": [
+        "bitter",
+        "rich"
+      ],
+      "glass": "short",
+      "liquid": "#95443D",
+      "flavour": {
+        "x": 0.75,
+        "y": -0.38
+      },
+      "instructions": "Equal parts, stirred."
+    },
+    {
+      "name": "Attaboy",
+      "ingredients": "gin, Dubonnet Rouge, raspberry liqueur",
+      "tags": [
+        "sweet",
+        "bitter"
+      ],
+      "glass": "coupe",
+      "liquid": "#BE437A",
+      "flavour": {
+        "x": 0.45,
+        "y": 0.35
+      },
+      "instructions": "1.5 oz gin, 1.5 oz Dubonnet Rouge, 0.5 oz raspberry liqueur. Stirred."
+    },
+    {
+      "name": "White-Collar Mexican",
+      "ingredients": "Terroir gin, strawberry aperitif, dry vermouth",
+      "tags": [
+        "spirit",
+        "sweet"
+      ],
+      "glass": "coupe",
+      "liquid": "#D38D95",
+      "flavour": {
+        "x": 0.65,
+        "y": 0.4
+      },
+      "instructions": "1.5 oz Terroir gin, 1 oz strawberry aperitif, 0.5 oz dry vermouth. Stirred."
+    }
+  ]
+}
