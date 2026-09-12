@@ -15,10 +15,6 @@ python3 tools/build-menu.py      # builds into _site/, prints the menu path
 
 To change the drinks, edit `menu.json` — the generated HTML is not in the repository.
 
-Tapping the logo three times on the menu reveals how each drink is made, and
-remembers it. The methods ship in the page and CSS hides them; the only JavaScript
-is the toggle.
-
 See `CLAUDE.md` for how the layout, the glass artwork, and the flavour plot fit
 together, and for what's still open.
 
