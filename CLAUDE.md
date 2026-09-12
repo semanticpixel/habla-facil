@@ -8,8 +8,7 @@ The site is two pages. `index.html` is the front door — logo and tagline, noth
 else. The menu lives at a random filename and **nothing links to it**: the only way
 in is the QR code at the bar. The plan is a different menu file per occasion.
 
-The menu is a finished layout with **placeholder drinks**. The real drink list is
-still to come — replacing it is the next job.
+The menu is a finished layout, and the drink list can be revised for each service.
 
 ### About the unguessable URL
 
@@ -117,8 +116,8 @@ so the writing sits on the lines, don't change one without the other), `--plot`
 
 ## Still open
 
-- **The real drink list.** Six placeholders (Paper Plane, Last Word, Clover Club, Old
-  Fashioned, Negroni, Whiskey Sour) with invented flavour positions.
+- **Drink list updates.** Current entries can be revised by changing each drink's
+  name, ingredients, glass, liquid colour, and flavour position.
 - **Liquid colours as a set.** Chosen one at a time they will drift. Six unrelated
   colours down a cream page get noisy — pick them together.
 - **Printing.** Browsers drop background graphics by default, which would take the
