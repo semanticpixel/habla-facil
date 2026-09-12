@@ -12,3 +12,6 @@ glass artwork, and the flavour plot fit together, and for what's still open.
 For retired menus, move the old HTML file into `_archive/`. GitHub Pages ignores
 underscore-prefixed folders, so archived files stay in the public repository without
 being served on the live site.
+
+The live site uses `elhablafacil.com`; the QR code should point directly to the
+current menu file, not the front door.
