@@ -18,38 +18,20 @@
 <title>El Habla F&aacute;cil &mdash; Menu</title>
 <style>
   :root {
-    --paper: #FCFAF3;
-    --ink: #060405;
-    --muted: #6E6658;
-    --pen: rgba(6, 4, 5, .45);      /* the frame around an entry */
-    --seam: rgba(6, 4, 5, .16);     /* dividers inside one entry */
-    --grid: rgba(74, 106, 124, .17);
-    --rule: rgba(58, 92, 148, .12);
-    --margin: rgba(178, 76, 62, .5);
+    /* Each colour carries both themes on one line, so one can never be updated
+       without the other. light-dark() resolves against color-scheme below. */
+    color-scheme: light dark;
+    --paper:  light-dark(#FCFAF3, #1B150E);
+    --ink:    light-dark(#060405, #EDE5D6);
+    --muted:  light-dark(#6E6658, #A79C88);
+    --pen:    light-dark(rgba(6, 4, 5, .45), rgba(237, 229, 214, .34));   /* the frame around an entry */
+    --seam:   light-dark(rgba(6, 4, 5, .16), rgba(237, 229, 214, .14));   /* dividers inside one entry */
+    --grid:   light-dark(rgba(74, 106, 124, .17), rgba(150, 190, 215, .15));
+    --rule:   light-dark(rgba(58, 92, 148, .12), rgba(130, 165, 220, .13));
+    --margin: light-dark(rgba(178, 76, 62, .5), rgba(226, 118, 100, .55));
+    --glass-ink: light-dark(#060405, #D8CFBC);  /* the line work inside each glass drawing */
     --pitch: 30px;        /* rule spacing; body line-height matches it */
     --plot: 10.5rem;      /* flavour plot size */
-    --glass-ink: #060405; /* the line work inside each glass drawing */
-    color-scheme: light dark;
-  }
-
-  /* Night behind the bar. Not an inversion: every colour is re-picked against
-     the dark ground, because contrast runs the other way there. The drink whose
-     dot was faintest on paper (Yellow, 1.92) is the strongest here, and the
-     deepest red (Night Dream, 6.34) is the quietest. Liquid colours come in
-     pairs from menu.json -- see "Liquid colours as a set" in CLAUDE.md. */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #1B150E;
-      --ink: #EDE5D6;
-      --muted: #A79C88;
-      --pen: rgba(237, 229, 214, .34);
-      --seam: rgba(237, 229, 214, .14);
-      --grid: rgba(150, 190, 215, .15);
-      --rule: rgba(130, 165, 220, .13);
-      --margin: rgba(226, 118, 100, .55);
-      --glass-ink: #D8CFBC;
-    }
-    .entry { --glass-liquid: var(--liquid-dark); }
   }
   * { box-sizing: border-box; }
   body {
@@ -83,7 +65,7 @@
   .entry {
     display: grid;
     counter-increment: drink;
-    --glass-liquid: var(--liquid-light);
+    --glass-liquid: light-dark(var(--liquid-light), var(--liquid-dark));
     border: 1px solid var(--pen);
     grid-template-columns: 1fr 1fr;
     grid-template-areas:

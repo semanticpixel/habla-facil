@@ -6,9 +6,11 @@
 <meta name="robots" content="noindex, nofollow">
 <title>El Habla F&aacute;cil</title>
 <style>
-  :root { --paper: #FCFAF3; --ink: #060405; --muted: #6E6658; color-scheme: light dark; }
-  @media (prefers-color-scheme: dark) {
-    :root { --paper: #1B150E; --ink: #EDE5D6; --muted: #A79C88; }
+  :root {
+    color-scheme: light dark;
+    --paper: light-dark(#FCFAF3, #1B150E);
+    --ink:   light-dark(#060405, #EDE5D6);
+    --muted: light-dark(#6E6658, #A79C88);
   }
   * { box-sizing: border-box; }
   body {

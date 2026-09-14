@@ -187,9 +187,19 @@ so the writing sits on the lines, don't change one without the other), `--plot`
   there buy nothing for a page that is only ever laid out left-to-right.
 - **The body's block padding is symmetric.** Top and bottom both come from the one
   `clamp()`, so the page is inset by the same amount at each end.
-- **The theme follows the phone**, via `prefers-color-scheme`. There is no toggle:
-  the page has no chrome to put one in, and a guest reading in a dark bar almost
-  always has their phone in dark mode already.
+- **The theme follows the phone**, via `light-dark()` against `color-scheme: light
+  dark` on `:root`. No media query: each colour carries both values on one line, so
+  one cannot be changed without the other. This is not only tidier — the media-query
+  version had a cascade bug, because `.entry { --glass-liquid: ... }` appeared twice
+  at equal specificity and the later rule silently won, so the dark liquid colours
+  never applied. One declaration cannot race itself.
+  Needs Chrome 123 / Safari 17.5 / Firefox 120 (all 2024). On anything older every
+  colour variable is invalid at computed-value time and the page renders unstyled —
+  readable, but with no graph paper, frames or rules. An `@supports not (color:
+  light-dark(#000, #fff))` block restoring the light values would fix that in about
+  ten lines if it ever matters.
+- **There is no theme toggle**, but adding one is now trivial: set `color-scheme:
+  light` or `dark` on `:root` and every colour follows.
 - **Both splash pages inline the logo.** `currentColor` cannot cross an `<img>`
   boundary — inside one the SVG is its own document and resolves to black, which
   disappears on the dark ground.

@@ -20,5 +20,8 @@ Quick orientation:
   toggles a class. Run `node tools/test-reveal.js` after a build if you touch it.
 - Liquid colours come in light/dark pairs and must be re-solved per theme, never
   reused or merely lightened. The dot's colour comes from CSS; never add a `fill`.
+- Theme colours use `light-dark()` in a single `:root` block. Do not reintroduce a
+  `prefers-color-scheme` media query: two rules at equal specificity race, and that
+  is exactly the bug it replaced.
 - `_local/` is gitignored scratch for generated artifacts; never commit its contents.
 - Keep changes small and consistent with the existing static HTML/CSS approach.
