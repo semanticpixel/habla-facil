@@ -1,7 +1,9 @@
 # Archived menus
 
 `tools/new-menu` snapshots the outgoing `menu.json` here whenever you rotate to a
-new menu URL, named `<date>-<old-filename>.json`. The drink list is the thing worth
+new menu URL, named `<date>-<old-filename>.json`. The date is the night the menu was
+served — pass `--date YYYY-MM-DD` when retiring it later, since the default is
+today. The drink list is the thing worth
 keeping: the page is generated, so any archived menu can be rebuilt from its JSON.
 
 To bring one back, copy the snapshot over `menu.json` and build:
