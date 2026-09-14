@@ -89,10 +89,11 @@ Each glass SVG is two paths in a shared `viewBox="0 0 124 120"`:
 <path class="ink"    fill="var(--glass-ink, #060405)"    d="…"/>
 ```
 
-Liquid sits under ink, so **setting one CSS variable recolours the drink**:
+Liquid sits under ink, so **setting one CSS variable recolours the drink**. The
+generator writes it inline on each entry, carrying both themes in the one value:
 
-```css
-.entry { --glass-liquid: #E0842F; }
+```html
+<article class="entry" style="--glass-liquid: light-dark(#DBB319, #F2C50E)">
 ```
 
 The variable inherits into the `<use>` shadow tree, which is why this works with a
@@ -118,11 +119,14 @@ Each drink is one entry in the `drinks` array of `menu.json`:
   "ingredients": "gin, yellow Chartreuse, Suze, lemon",
   "tags": ["floral", "bitter", "sweet"],
   "glass": "coupe",
-  "liquid": "#DBB319",
+  "liquid": { "light": "#DBB319", "dark": "#F2C50E" },
   "flavour": { "x": -0.40, "y": -0.50 },
   "instructions": "Equal parts, shaken."
 }
 ```
+
+`liquid` is a pair, one colour per theme. A bare string still works and is used for
+both — that is how menus archived before dark mode keep building.
 
 `instructions` is the method, rendered into every entry and hidden in CSS. Tapping
 the logo three times shows all of them at once and stores that in `localStorage`, so
@@ -148,8 +152,9 @@ cx = 48 + x * 33     x: -1 sour        → +1 spirit-forward
 cy = 48 - y * 33     y: -1 bitter      → +1 sweet
 ```
 
-The dot is filled with the same colour as that drink's liquid, so the glass and the
-plot always agree. **You do not compute `cx`/`cy` by hand** — put the `x`/`y` pair in
+The dot takes its fill from `--glass-liquid` rather than an attribute, so the glass
+and the plot cannot disagree — the colour is written exactly once per drink, in the
+entry's inline style. A `fill` on the dot is a validation error. **You do not compute `cx`/`cy` by hand** — put the `x`/`y` pair in
 `menu.json` and the generator applies the formula. `tools/build-menu.py` rejects any
 value outside -1..1, and `tools/check-menu.py` rejects a rendered dot outside the
 plot bounds.
@@ -183,6 +188,25 @@ so the writing sits on the lines, don't change one without the other), `--plot`
   there buy nothing for a page that is only ever laid out left-to-right.
 - **The body's block padding is symmetric.** Top and bottom both come from the one
   `clamp()`, so the page is inset by the same amount at each end.
+- **The theme follows the phone**, via `light-dark()` against `color-scheme: light
+  dark` on `:root`. No media query: each colour carries both values on one line, so
+  one cannot be changed without the other. This is not only tidier — the media-query
+  version had a cascade bug, because `.entry { --glass-liquid: ... }` appeared twice
+  at equal specificity and the later rule silently won, so the dark liquid colours
+  never applied. One declaration cannot race itself.
+  The drink colours follow the same shape: the generator writes
+  `light-dark(<light>, <dark>)` straight into the entry's inline style, so there is
+  one custom property rather than a light and a dark one assembled by a CSS rule.
+  Needs Chrome 123 / Safari 17.5 / Firefox 120 (all 2024). On anything older every
+  colour variable is invalid at computed-value time and the page renders unstyled —
+  readable, but with no graph paper, frames or rules. An `@supports not (color:
+  light-dark(#000, #fff))` block restoring the light values would fix that in about
+  ten lines if it ever matters.
+- **There is no theme toggle**, but adding one is now trivial: set `color-scheme:
+  light` or `dark` on `:root` and every colour follows.
+- **Both splash pages inline the logo.** `currentColor` cannot cross an `<img>`
+  boundary — inside one the SVG is its own document and resolves to black, which
+  disappears on the dark ground.
 - **The methods are rendered, not fetched.** They ship in the HTML and CSS hides
   them, so the page needs no JavaScript to be complete — the script only toggles a
   class on `<html>`. It reads storage before first paint so a reload does not flash
@@ -199,11 +223,15 @@ so the writing sits on the lines, don't change one without the other), `--plot`
 
 ## Still open
 
-- **Liquid colours as a set.** Chosen one at a time they drift. The current seven
-  were picked together: hue separates the three non-red drinks, and the four red
-  ones — which cannot separate by hue — are laddered by lightness and chroma, from
-  pale strawberry aperitif to deep rye brick. Every pair clears an OKLab distance of
-  0.08. Adding a drink means re-checking the set, not picking one more colour.
+- **Liquid colours as a set, twice over.** Chosen one at a time they drift. Hue
+  separates the three non-red drinks; the four red ones — which cannot separate by
+  hue — are laddered by lightness and chroma, pale strawberry aperitif to deep rye
+  brick. Every pair clears an OKLab distance of 0.08 in **both** themes. Adding a
+  drink means re-checking both sets, not picking two more colours.
+- **Dark is not an inversion.** Contrast runs the other way on a dark ground, so the
+  ladder flips: Yellow is the faintest dot on paper (1.92) and the strongest at night
+  (11.0), while Night Dream goes from 6.34 to 4.50. Keep each drink's hue and
+  re-solve its lightness against `--paper`; do not lighten the light-mode colour.
 - **Printing.** Browsers drop background graphics by default, which would take the
   graph paper and the rules with them. Needs a print stylesheet or real borders if
   anyone prints this.

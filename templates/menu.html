@@ -18,14 +18,18 @@
 <title>El Habla F&aacute;cil &mdash; Menu</title>
 <style>
   :root {
-    --paper: #FCFAF3;
-    --ink: #060405;
-    --muted: #6E6658;
-    --pen: rgba(6, 4, 5, .45);      /* the frame around an entry */
-    --seam: rgba(6, 4, 5, .16);     /* dividers inside one entry */
-    --grid: rgba(74, 106, 124, .17);
-    --rule: rgba(58, 92, 148, .12);
-    --margin: rgba(178, 76, 62, .5);
+    /* Each colour carries both themes on one line, so one can never be updated
+       without the other. light-dark() resolves against color-scheme below. */
+    color-scheme: light dark;
+    --paper:  light-dark(#FCFAF3, #1B150E);
+    --ink:    light-dark(#060405, #EDE5D6);
+    --muted:  light-dark(#6E6658, #A79C88);
+    --pen:    light-dark(rgba(6, 4, 5, .45), rgba(237, 229, 214, .34));   /* the frame around an entry */
+    --seam:   light-dark(rgba(6, 4, 5, .16), rgba(237, 229, 214, .14));   /* dividers inside one entry */
+    --grid:   light-dark(rgba(74, 106, 124, .17), rgba(150, 190, 215, .15));
+    --rule:   light-dark(rgba(58, 92, 148, .12), rgba(130, 165, 220, .13));
+    --margin: light-dark(rgba(178, 76, 62, .5), rgba(226, 118, 100, .55));
+    --glass-ink: light-dark(#060405, #D8CFBC);  /* the line work inside each glass drawing */
     --pitch: 30px;        /* rule spacing; body line-height matches it */
     --plot: 10.5rem;      /* flavour plot size */
   }
@@ -86,7 +90,7 @@
   .glass { width: min(9.5rem, 100%); height: auto; display: block; }
   .plot { width: min(var(--plot), 100%); height: auto; overflow: visible; }
   .plot line { stroke: var(--pen); stroke-width: .8; }
-  .plot .dot { stroke: var(--paper); stroke-width: 1.5; }
+  .plot .dot { fill: var(--glass-liquid); stroke: var(--paper); stroke-width: 1.5; }
   .plot .ax { font: italic 6px "Iowan Old Style", Georgia, serif; fill: var(--muted); }
 
   .leaf {

@@ -14,6 +14,8 @@ python3 tools/build-menu.py      # builds into _site/, prints the menu path
 ```
 
 To change the drinks, edit `menu.json` — the generated HTML is not in the repository.
+Each drink carries a liquid colour per theme; the page follows the reader's phone
+between light and dark via `light-dark()`.
 
 Tapping the logo three times on the menu reveals how each drink is made, and
 remembers it. The methods ship in the page and CSS hides them; the only JavaScript

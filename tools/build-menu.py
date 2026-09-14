@@ -38,7 +38,7 @@ STATIC_DIRS = ("assets",)
 # The method is rendered into every entry and hidden in CSS. Tapping the logo three
 # times reveals it -- nothing is fetched or assembled at runtime, so the page works
 # the same with scripting off, minus the secret.
-ENTRY = """      <article class="entry" style="--glass-liquid: {liquid}">
+ENTRY = """      <article class="entry" style="--glass-liquid: light-dark({light}, {dark})">
         <div class="leaf">
           <h2><span class="num"></span> {name}</h2>
           <p class="ing">{ingredients}</p>
@@ -52,7 +52,7 @@ ENTRY = """      <article class="entry" style="--glass-liquid: {liquid}">
           <svg class="plot" viewBox="0 0 96 96" aria-hidden="true">
             <line x1="48" y1="10" x2="48" y2="86"/>
             <line x1="10" y1="48" x2="86" y2="48"/>
-            <circle class="dot" cx="{cx}" cy="{cy}" r="5.5" fill="{liquid}"/>
+            <circle class="dot" cx="{cx}" cy="{cy}" r="5.5"/>
             <text x="48" y="6"  class="ax" text-anchor="middle">sweet</text>
             <text x="48" y="94" class="ax" text-anchor="middle">bitter</text>
             <text x="1"  y="44" class="ax">sour</text>
@@ -61,6 +61,18 @@ ENTRY = """      <article class="entry" style="--glass-liquid: {liquid}">
         </div>
       </article>
 """
+
+
+def liquids(drink):
+    """The drink's colour for each theme.
+
+    A bare string is the light colour and doubles as the dark one, so menus
+    archived before dark mode still build -- they just look the same in both.
+    """
+    value = drink["liquid"]
+    if isinstance(value, str):
+        return value, value
+    return value["light"], value["dark"]
 
 
 def plot_position(flavour):
@@ -104,8 +116,18 @@ def validate(menu):
             if not str(drink.get(field, "")).strip():
                 errors.append(f"{where}: missing {field}")
 
-        if not HEX.match(str(drink.get("liquid", ""))):
-            errors.append(f"{where}: liquid must be a #rrggbb colour, got {drink.get('liquid')!r}")
+        liquid = drink.get("liquid")
+        if isinstance(liquid, str):
+            if not HEX.match(liquid):
+                errors.append(f"{where}: liquid must be a #rrggbb colour, got {liquid!r}")
+        elif isinstance(liquid, dict):
+            for theme in ("light", "dark"):
+                if not HEX.match(str(liquid.get(theme, ""))):
+                    errors.append(
+                        f"{where}: liquid.{theme} must be a #rrggbb colour, got {liquid.get(theme)!r}"
+                    )
+        else:
+            errors.append(f"{where}: liquid must be a colour or a light/dark pair, got {liquid!r}")
 
         if drink.get("glass") not in GLASSES:
             errors.append(f"{where}: glass must be one of {sorted(GLASSES)}, got {drink.get('glass')!r}")
@@ -132,8 +154,10 @@ def render(menu):
     entries = ""
     for drink in menu["drinks"]:
         cx, cy = plot_position(drink["flavour"])
+        light, dark = liquids(drink)
         entries += ENTRY.format(
-            liquid=drink["liquid"],
+            light=light,
+            dark=dark,
             name=html.escape(drink["name"]),
             ingredients=html.escape(drink["ingredients"]),
             instructions=html.escape(drink["instructions"]),

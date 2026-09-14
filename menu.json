@@ -11,7 +11,10 @@
         "sweet"
       ],
       "glass": "coupe",
-      "liquid": "#DBB319",
+      "liquid": {
+        "light": "#DBB319",
+        "dark": "#F2C50E"
+      },
       "flavour": {
         "x": -0.4,
         "y": -0.5
@@ -27,7 +30,10 @@
         "sweet"
       ],
       "glass": "coupe",
-      "liquid": "#9963B1",
+      "liquid": {
+        "light": "#9963B1",
+        "dark": "#C183DE"
+      },
       "flavour": {
         "x": -0.52,
         "y": 0.45
@@ -43,7 +49,10 @@
         "creamy"
       ],
       "glass": "coupe",
-      "liquid": "#A08849",
+      "liquid": {
+        "light": "#A08849",
+        "dark": "#D5B970"
+      },
       "flavour": {
         "x": -0.08,
         "y": 0.32
@@ -58,7 +67,10 @@
         "botanical"
       ],
       "glass": "short",
-      "liquid": "#D53D38",
+      "liquid": {
+        "light": "#D53D38",
+        "dark": "#FE6D62"
+      },
       "flavour": {
         "x": 0.55,
         "y": -0.48
@@ -73,7 +85,10 @@
         "rich"
       ],
       "glass": "short",
-      "liquid": "#95443D",
+      "liquid": {
+        "light": "#95443D",
+        "dark": "#C26359"
+      },
       "flavour": {
         "x": 0.75,
         "y": -0.38
@@ -88,7 +103,10 @@
         "bitter"
       ],
       "glass": "coupe",
-      "liquid": "#BE437A",
+      "liquid": {
+        "light": "#BE437A",
+        "dark": "#E85A99"
+      },
       "flavour": {
         "x": 0.45,
         "y": 0.35
@@ -103,7 +121,10 @@
         "sweet"
       ],
       "glass": "coupe",
-      "liquid": "#D38D95",
+      "liquid": {
+        "light": "#D38D95",
+        "dark": "#EC9CA5"
+      },
       "flavour": {
         "x": 0.65,
         "y": 0.4

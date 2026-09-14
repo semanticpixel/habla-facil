@@ -83,9 +83,15 @@ def compact(parts):
     return " ".join("".join(parts).split())
 
 
-def color_from_style(style):
-    match = re.search(r"--glass-liquid:\s*(#[0-9a-fA-F]{6})", style)
-    return match.group(1) if match else None
+def colors_from_style(style):
+    """The light and dark liquid colours declared on one entry."""
+    match = re.search(
+        r"--glass-liquid:\s*light-dark\(\s*(#[0-9a-fA-F]{6})\s*,\s*(#[0-9a-fA-F]{6})\s*\)",
+        style,
+    )
+    if not match:
+        return {}
+    return {"light": match.group(1), "dark": match.group(2)}
 
 
 def main():
@@ -102,7 +108,7 @@ def main():
 
     for entry in parser.entries:
         label = compact(entry["h2"]) or f"entry at line {entry['line']}"
-        liquid = color_from_style(entry["style"])
+        liquids = colors_from_style(entry["style"])
         dot = entry["dot"]
 
         if entry["num"] is None:
@@ -124,8 +130,11 @@ def main():
         if not compact(entry["recipe"]):
             errors.append(f"Line {entry['line']}: {label} is missing its method.")
 
-        if not liquid:
-            errors.append(f"Line {entry['line']}: {label} is missing --glass-liquid.")
+        if not liquids:
+            errors.append(
+                f"Line {entry['line']}: {label} needs "
+                "--glass-liquid: light-dark(<light>, <dark>)."
+            )
 
         if not entry["glass"] or not entry["glass"].startswith("#glass-"):
             errors.append(f"Line {entry['line']}: {label} is missing a glass symbol reference.")
@@ -134,8 +143,11 @@ def main():
             errors.append(f"Line {entry['line']}: {label} is missing a flavour plot dot.")
             continue
 
-        if liquid and dot["fill"] and dot["fill"].lower() != liquid.lower():
-            errors.append(f"Line {entry['line']}: {label} dot fill does not match --glass-liquid.")
+        if dot["fill"]:
+            errors.append(
+                f"Line {entry['line']}: {label} dot has a hardcoded fill; "
+                "its colour comes from --glass-liquid in CSS."
+            )
 
         for axis in ("cx", "cy"):
             try:
