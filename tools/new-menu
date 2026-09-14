@@ -6,19 +6,59 @@
 # nothing to copy and no old file to delete -- the next build publishes at the
 # new URL and the old one 404s.
 #
-# Regenerate the QR code afterwards, and test it before service.
+#     tools/new-menu                    archive under today's date
+#     tools/new-menu --date 2026-09-12  archive under the date it was served
+#
+# The date names the snapshot, so pass the night the menu was actually poured
+# rather than the day you got round to retiring it.
+#
+# Regenerate the QR afterwards with tools/make-qr.py, and test it before service.
 set -eu
 
 root="$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
+served=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --date)
+      [ $# -ge 2 ] || { printf '%s\n' "--date needs a YYYY-MM-DD value" >&2; exit 2; }
+      served="$2"
+      shift 2
+      ;;
+    --date=*)
+      served="${1#--date=}"
+      shift
+      ;;
+    -h|--help)
+      awk 'NR > 1 { if (!/^#/) exit; sub(/^# ?/, ""); print }' "$0"
+      exit 0
+      ;;
+    *)
+      printf 'unknown argument: %s\n' "$1" >&2
+      exit 2
+      ;;
+  esac
+done
 
 name="$(LC_ALL=C od -An -N8 -tx1 /dev/urandom | tr -d ' \n' | cut -c1-10).html"
 
-MENU_NAME="$name" python3 - "$root" <<'PY'
-import datetime, json, os, pathlib, sys
+MENU_NAME="$name" MENU_SERVED="$served" python3 - "$root" <<'PY'
+import datetime, json, os, pathlib, re, sys
 
 root = pathlib.Path(sys.argv[1])
 path = root / "menu.json"
 menu = json.loads(path.read_text(encoding="utf-8"))
+
+served = os.environ.get("MENU_SERVED") or ""
+if served:
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", served):
+        raise SystemExit(f"--date must be YYYY-MM-DD, got {served!r}")
+    try:
+        datetime.date.fromisoformat(served)
+    except ValueError as exc:
+        raise SystemExit(f"--date is not a real date: {exc}")
+else:
+    served = f"{datetime.date.today():%Y-%m-%d}"
 
 def write(target, data):
     target.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -27,7 +67,7 @@ def write(target, data):
 archive = root / "_archive"
 archive.mkdir(exist_ok=True)
 stem = pathlib.Path(menu["file"]).stem
-snapshot = archive / f"{datetime.date.today():%Y-%m-%d}-{stem}.json"
+snapshot = archive / f"{served}-{stem}.json"
 if snapshot.exists():
     raise SystemExit(f"refusing to overwrite {snapshot.relative_to(root)}")
 write(snapshot, menu)

@@ -34,7 +34,9 @@ from `CNAME` and the filename from `menu.json`, so it cannot point at a stale UR
 which is the failure that ends with guests scanning into a 404 at the bar.
 
 `new-menu` snapshots the outgoing `menu.json` into `_archive/` before rotating, so
-each menu's drink list outlives its URL and can be rebuilt later. That happens on
+each menu's drink list outlives its URL and can be rebuilt later. Pass
+`--date 2026-09-12` to name the snapshot for the night it was actually served —
+you rarely retire a menu the same day you pour it, and the default is today. That happens on
 rotation only: revising drinks without rotating leaves the previous list in git
 history alone. See `_archive/README.md`.
 
