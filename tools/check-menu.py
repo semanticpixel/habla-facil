@@ -85,12 +85,13 @@ def compact(parts):
 
 def colors_from_style(style):
     """The light and dark liquid colours declared on one entry."""
-    found = {}
-    for theme in ("light", "dark"):
-        match = re.search(rf"--liquid-{theme}:\s*(#[0-9a-fA-F]{{6}})", style)
-        if match:
-            found[theme] = match.group(1)
-    return found
+    match = re.search(
+        r"--glass-liquid:\s*light-dark\(\s*(#[0-9a-fA-F]{6})\s*,\s*(#[0-9a-fA-F]{6})\s*\)",
+        style,
+    )
+    if not match:
+        return {}
+    return {"light": match.group(1), "dark": match.group(2)}
 
 
 def main():
@@ -129,9 +130,11 @@ def main():
         if not compact(entry["recipe"]):
             errors.append(f"Line {entry['line']}: {label} is missing its method.")
 
-        for theme in ("light", "dark"):
-            if theme not in liquids:
-                errors.append(f"Line {entry['line']}: {label} is missing --liquid-{theme}.")
+        if not liquids:
+            errors.append(
+                f"Line {entry['line']}: {label} needs "
+                "--glass-liquid: light-dark(<light>, <dark>)."
+            )
 
         if not entry["glass"] or not entry["glass"].startswith("#glass-"):
             errors.append(f"Line {entry['line']}: {label} is missing a glass symbol reference.")

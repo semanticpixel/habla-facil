@@ -38,7 +38,7 @@ STATIC_DIRS = ("assets",)
 # The method is rendered into every entry and hidden in CSS. Tapping the logo three
 # times reveals it -- nothing is fetched or assembled at runtime, so the page works
 # the same with scripting off, minus the secret.
-ENTRY = """      <article class="entry" style="--liquid-light: {light}; --liquid-dark: {dark}">
+ENTRY = """      <article class="entry" style="--glass-liquid: light-dark({light}, {dark})">
         <div class="leaf">
           <h2><span class="num"></span> {name}</h2>
           <p class="ing">{ingredients}</p>

@@ -89,10 +89,11 @@ Each glass SVG is two paths in a shared `viewBox="0 0 124 120"`:
 <path class="ink"    fill="var(--glass-ink, #060405)"    d="…"/>
 ```
 
-Liquid sits under ink, so **setting one CSS variable recolours the drink**:
+Liquid sits under ink, so **setting one CSS variable recolours the drink**. The
+generator writes it inline on each entry, carrying both themes in the one value:
 
-```css
-.entry { --glass-liquid: #E0842F; }
+```html
+<article class="entry" style="--glass-liquid: light-dark(#DBB319, #F2C50E)">
 ```
 
 The variable inherits into the `<use>` shadow tree, which is why this works with a
@@ -151,9 +152,9 @@ cx = 48 + x * 33     x: -1 sour        → +1 spirit-forward
 cy = 48 - y * 33     y: -1 bitter      → +1 sweet
 ```
 
-The dot takes its fill from `--glass-liquid` in CSS rather than an attribute, so the
-glass and the plot cannot disagree — there is only one copy of the colour per theme,
-on the `<article>`. A `fill` on the dot is a validation error. **You do not compute `cx`/`cy` by hand** — put the `x`/`y` pair in
+The dot takes its fill from `--glass-liquid` rather than an attribute, so the glass
+and the plot cannot disagree — the colour is written exactly once per drink, in the
+entry's inline style. A `fill` on the dot is a validation error. **You do not compute `cx`/`cy` by hand** — put the `x`/`y` pair in
 `menu.json` and the generator applies the formula. `tools/build-menu.py` rejects any
 value outside -1..1, and `tools/check-menu.py` rejects a rendered dot outside the
 plot bounds.
@@ -193,6 +194,9 @@ so the writing sits on the lines, don't change one without the other), `--plot`
   version had a cascade bug, because `.entry { --glass-liquid: ... }` appeared twice
   at equal specificity and the later rule silently won, so the dark liquid colours
   never applied. One declaration cannot race itself.
+  The drink colours follow the same shape: the generator writes
+  `light-dark(<light>, <dark>)` straight into the entry's inline style, so there is
+  one custom property rather than a light and a dark one assembled by a CSS rule.
   Needs Chrome 123 / Safari 17.5 / Firefox 120 (all 2024). On anything older every
   colour variable is invalid at computed-value time and the page renders unstyled —
   readable, but with no graph paper, frames or rules. An `@supports not (color:
