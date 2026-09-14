@@ -28,6 +28,28 @@
     --margin: rgba(178, 76, 62, .5);
     --pitch: 30px;        /* rule spacing; body line-height matches it */
     --plot: 10.5rem;      /* flavour plot size */
+    --glass-ink: #060405; /* the line work inside each glass drawing */
+    color-scheme: light dark;
+  }
+
+  /* Night behind the bar. Not an inversion: every colour is re-picked against
+     the dark ground, because contrast runs the other way there. The drink whose
+     dot was faintest on paper (Yellow, 1.92) is the strongest here, and the
+     deepest red (Night Dream, 6.34) is the quietest. Liquid colours come in
+     pairs from menu.json -- see "Liquid colours as a set" in CLAUDE.md. */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #1B150E;
+      --ink: #EDE5D6;
+      --muted: #A79C88;
+      --pen: rgba(237, 229, 214, .34);
+      --seam: rgba(237, 229, 214, .14);
+      --grid: rgba(150, 190, 215, .15);
+      --rule: rgba(130, 165, 220, .13);
+      --margin: rgba(226, 118, 100, .55);
+      --glass-ink: #D8CFBC;
+    }
+    .entry { --glass-liquid: var(--liquid-dark); }
   }
   * { box-sizing: border-box; }
   body {
@@ -61,6 +83,7 @@
   .entry {
     display: grid;
     counter-increment: drink;
+    --glass-liquid: var(--liquid-light);
     border: 1px solid var(--pen);
     grid-template-columns: 1fr 1fr;
     grid-template-areas:
@@ -86,7 +109,7 @@
   .glass { width: min(9.5rem, 100%); height: auto; display: block; }
   .plot { width: min(var(--plot), 100%); height: auto; overflow: visible; }
   .plot line { stroke: var(--pen); stroke-width: .8; }
-  .plot .dot { stroke: var(--paper); stroke-width: 1.5; }
+  .plot .dot { fill: var(--glass-liquid); stroke: var(--paper); stroke-width: 1.5; }
   .plot .ax { font: italic 6px "Iowan Old Style", Georgia, serif; fill: var(--muted); }
 
   .leaf {

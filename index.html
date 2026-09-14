@@ -16,7 +16,10 @@
 <meta name="twitter:description" content="The most exclusive cocktail bar in San Francisco.">
 <title>El Habla F&aacute;cil</title>
 <style>
-  :root { --paper: #FCFAF3; --ink: #060405; --muted: #6E6658; }
+  :root { --paper: #FCFAF3; --ink: #060405; --muted: #6E6658; color-scheme: light dark; }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #1B150E; --ink: #EDE5D6; --muted: #A79C88; }
+  }
   * { box-sizing: border-box; }
   body {
     /* vh first as the fallback; dvh accounts for mobile browser chrome */
